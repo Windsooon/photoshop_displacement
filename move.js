@@ -1,39 +1,46 @@
 #include "helpers.js"
 
-var fileRef = File("~/T-shirt-bussies/TShirt-Normal.psd")
-var fileRefIcon = File("~/T-shirt-bussies/icon/science.svg")
-var docRef = app.open(fileRef)
-var docRefIcon = app.open(fileRefIcon)
+// config parameters
+const targetDocDir = "~/T-shirt-bussies/";
+const targetDocName = "TShirt-Normal.psd";
+const targetLayerName = "Color Fill 2";
 
-#target photoshop
-app.bringToFront();
+const sourceDocDir = "~/T-shirt-bussies/icon/";
+const sourceDocName = "science.svg";
+const sourceDocLayerName = "图层 1";
 
-var sourceDocumentName = 1;
-var targetDocumentName = 0;
+const persentage = 20;
+
+// open both documents 
+const targetDoc = app.open(File(targetDocDir+targetDocName));
+const sourceDoc = app.open(File(sourceDocDir+sourceDocName));
 
 // populate this array with whatever the names of the layers 
-// you want to copy are
-
 var layersToCopy = new Array(
-  '图层 1',
+    sourceDocLayerName,
 );
 
-// alternatively, specify the name of a layer group containing
-// the layers you want to copy over. 
-// Just uncomment the following line
+copyLayers(layersToCopy, sourceDocName, targetDocName);
 
-//var layersToCopy = 'layer-group-to-copy';
+// close the source document
+app.documents.getByName(sourceDocName).close(SaveOptions.DONOTSAVECHANGES);
 
-copyLayers(layersToCopy, sourceDocumentName, targetDocumentName);
+sourceLayer = app.documents.getByName(targetDocName).layers[sourceDocLayerName];
 
-app.activeDocument = app.documents[0];
-iconLayer = activeDocument.activeLayer;
+// get center coordinates from source layer
+var sourceBounds = sourceLayer.bounds;
+var sourceLayerCenterX = sourceBounds[0].value + (sourceBounds[2].value - sourceBounds[0].value)/2;
+var sourceLayerCenterY = sourceBounds[1].value + (sourceBounds[3].value - sourceBounds[1].value)/2;
 
-resizeLayers(iconLayer, 20);
-app.documents[1].close(SaveOptions.DONOTSAVECHANGES);
-backgroundLayer = app.activeDocument.layers["Color Fill 2"];
-app.activeDocument.activeLayer = backgroundLayer;
-var bounds = backgroundLayer.bounds;
-var width = bounds[2].value - bounds[0].value;
-var height = bounds[3].value - bounds[1].value;
-iconLayer.translate(680, 100);
+resizeLayers(sourceLayer, persentage);
+
+targetLayer = app.activeDocument.layers[targetLayerName];
+// get center coordinates from target layer
+var targetBounds = targetLayer.bounds;
+var targetCenterX = targetBounds[0].value + (targetBounds[2].value - targetBounds[0].value)/2;
+var targetCenterY = targetBounds[1].value + (targetBounds[3].value - targetBounds[1].value)/2;
+
+var moveX = targetCenterX - sourceLayerCenterX;
+var moveY = targetCenterY - sourceLayerCenterY;
+sourceLayer.translate(moveX, moveY);
+
