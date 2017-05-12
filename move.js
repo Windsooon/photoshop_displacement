@@ -26,21 +26,15 @@ copyLayers(layersToCopy, sourceDocName, targetDocName);
 app.documents.getByName(sourceDocName).close(SaveOptions.DONOTSAVECHANGES);
 
 sourceLayer = app.documents.getByName(targetDocName).layers[sourceDocLayerName];
-
 // get center coordinates from source layer
-var sourceBounds = sourceLayer.bounds;
-var sourceLayerCenterX = sourceBounds[0].value + (sourceBounds[2].value - sourceBounds[0].value)/2;
-var sourceLayerCenterY = sourceBounds[1].value + (sourceBounds[3].value - sourceBounds[1].value)/2;
+var sourceCenter = getCenter(sourceLayer)
 
 resizeLayers(sourceLayer, persentage);
 
 targetLayer = app.activeDocument.layers[targetLayerName];
 // get center coordinates from target layer
-var targetBounds = targetLayer.bounds;
-var targetCenterX = targetBounds[0].value + (targetBounds[2].value - targetBounds[0].value)/2;
-var targetCenterY = targetBounds[1].value + (targetBounds[3].value - targetBounds[1].value)/2;
+var targetCenter = getCenter(targetLayer)
 
-var moveX = targetCenterX - sourceLayerCenterX;
-var moveY = targetCenterY - sourceLayerCenterY;
+var moveX = targetCenter.centerX - sourceCenter.centerX;
+var moveY = targetCenter.centerY - sourceCenter.centerY;
 sourceLayer.translate(moveX, moveY);
-

@@ -37,3 +37,10 @@ function resizeLayers(layer, persentage) {
     activeDocument.activeLayer.resize(persentage, persentage, AnchorPosition.MIDDLECENTER);
     app.preferences.rulerUnits = startRulerUnits; 
 }
+
+function getCenter(layer) {
+    var bounds = layer.bounds;
+    var boundsCenterX = bounds[0].value + (bounds[2].value - bounds[0].value)/2;
+    var boundsCenterY = bounds[1].value + (bounds[3].value - bounds[1].value)/2;
+    return {"centerX": boundsCenterX, "centerY": boundsCenterY};
+}
